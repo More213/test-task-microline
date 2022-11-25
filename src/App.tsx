@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.module.scss';
-import DownloadFileComponent from './DownloadFile/index'
+import DownloadFileComponent from './components/DownloadFile/index'
 
 function App() {
   return (
