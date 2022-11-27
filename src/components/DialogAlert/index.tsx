@@ -6,10 +6,18 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-const AlertDialog = () => {
-  const [open, setOpen] = useState(false);
+const AlertDialog = ({
+  isOpen = false,
+  setOpen,
+  agreeFun = () => {},
+}: {
+  isOpen: boolean,
+  setOpen: Function,
+  agreeFun?: Function
+}) => {
+  // const [open, setOpen] = useState(isOpen);
 
-
+// console.log(open)
 
   // useEffect(() => {
   //   console.log(true)
@@ -21,16 +29,20 @@ const AlertDialog = () => {
   // };
 
   const handleClose = () => {
-    // setOpen(false);
+    setOpen(false);
   };
 
+  const handleAgree = () => {
+    agreeFun()
+    handleClose()
+  }
   return (
     <div>
       {/* <Button variant="outlined" onClick={handleClickOpen}>
         Open alert dialog
       </Button> */}
       <Dialog
-        open={open}
+        open={isOpen}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
@@ -46,7 +58,7 @@ const AlertDialog = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>No</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleAgree} autoFocus>
             Yes
           </Button>
         </DialogActions>

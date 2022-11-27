@@ -1,18 +1,21 @@
 import { dividerClasses } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import styles from './index.module.scss'
+import styles from './index.module.scss';
 import JsFileDownloader from 'js-file-downloader';
 import AlertDialog from '../DialogAlert/index'
 
 const DownloadFileComponent = () => {
   const [value, setValue] = useState('')
   const [extension, setExtension] = useState('')
-  const [IsErrorMessage, setIsErrorMessage] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const rexFirstLvl = /^(http|https)\:\/\/[^\/]+/gm
   const rexIllicitFile = /\/([a-zA-Z]+)$/gm;
+
+
 
 
   //  a library with a ready-made solution is connected to check the work of downloading a file from a URL
@@ -62,13 +65,23 @@ const DownloadFileComponent = () => {
     .catch(console.error);
   }
 
+  const handlerError = () => {
+    setShowErrorMessage(true)
+  }
   const onChangeValue = (val: string) => {
     setValue(val)
   }
 
   const handleClickOpen = () => {
-    setOpen(true);
+    if(value !== '') {
+      setOpen(true);
+      onDownloadFile()
+    }
+    setShowErrorMessage(true)
   };
+  console.log(open)
+
+  
 
   return (
     <div className={styles.txtFieldWrap}>
@@ -80,11 +93,17 @@ const DownloadFileComponent = () => {
 
       <Button
         variant="contained"
-        onClick={() => handleClickOpen()}>Download File</Button>
+        onClick={handleClickOpen}>Download File</Button>
         {/* <AlertDialog isOpen={open}/> */}
-        {
-          open ? <AlertDialog /> : ''
+        { showErrorMessage ? 
+          <p></p>
+          : <></>
         }
+        <AlertDialog 
+        isOpen={open}
+        setOpen={setOpen}
+        />
+        
     </div>
   )
 }
