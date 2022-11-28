@@ -1,4 +1,3 @@
-import { dividerClasses } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import TextField from '@mui/material/TextField';
@@ -10,13 +9,10 @@ import AlertDialog from '../DialogAlert/index'
 const DownloadFileComponent = () => {
   const [value, setValue] = useState('')
   const [extension, setExtension] = useState('')
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState('');
   const [open, setOpen] = useState(false);
   const rexFirstLvl = /^(http|https)\:\/\/[^\/]+/gm
   const rexIllicitFile = /\/([a-zA-Z]+)$/gm;
-
-
-
 
   //  a library with a ready-made solution is connected to check the work of downloading a file from a URL
   const downloadFile = () => {
@@ -30,6 +26,7 @@ const DownloadFileComponent = () => {
     });
   
   }
+
   // this is my solution
   const onDownloadFile = () => {
     const myHeaders = new Headers();
@@ -44,7 +41,6 @@ const DownloadFileComponent = () => {
     fetch(myRequest)
     .then((res) => {
       let fileExtension = res.headers.get('content-type')?.toString()
-      console.log()
       if(!!fileExtension) {
         let getExtension = rexIllicitFile.exec(fileExtension)
         setExtension(getExtension ? getExtension[1] : '');
@@ -61,30 +57,38 @@ const DownloadFileComponent = () => {
 
       URL.revokeObjectURL(link.href);
       document.body.removeChild(link);
+
     })
-    .catch(console.error);
+    .catch(handlerError);
   }
 
   const handlerError = () => {
-    setShowErrorMessage(true)
+    setShowErrorMessage('An error has occurred. Please enter another url')
   }
   const onChangeValue = (val: string) => {
+    if(!!showErrorMessage){
+      setShowErrorMessage('')
+    }
     setValue(val)
   }
 
   const handleClickOpen = () => {
-    if(value !== '') {
+    if(!!value) {
       setOpen(true);
-      onDownloadFile()
+    } else{
+      setShowErrorMessage('please enter url')
     }
-    setShowErrorMessage(true)
   };
-  console.log(open)
 
-  
+  const handleAgree = () => {
+    setOpen(false)
+    onDownloadFile()
+  }
 
   return (
+    <div className={styles.flexCol}>
     <div className={styles.txtFieldWrap}>
+
       <TextField id="standard-basic"
         defaultValue={value}
         label="URL file"
@@ -94,16 +98,18 @@ const DownloadFileComponent = () => {
       <Button
         variant="contained"
         onClick={handleClickOpen}>Download File</Button>
-        {/* <AlertDialog isOpen={open}/> */}
-        { showErrorMessage ? 
-          <p></p>
-          : <></>
-        }
         <AlertDialog 
         isOpen={open}
         setOpen={setOpen}
+        handleAgree={handleAgree}
         />
         
+    </div>
+
+    { showErrorMessage ? 
+          <p className={styles.errorMessge}>{showErrorMessage}</p>
+          : <></>
+        }
     </div>
   )
 }
